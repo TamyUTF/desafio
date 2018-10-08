@@ -1,0 +1,7 @@
+{
+  "name": "desafioTecnico",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular"
+}
