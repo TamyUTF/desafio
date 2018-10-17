@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{tituloPagina}}</ion-title>
+    <ion-buttons end>
+        <button ion-button icon-only (click)="fechar()">
+          <ion-icon name="close"></ion-icon>
+        </button>
+      </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content padding>
+
+  <ion-card *ngIf="!editando">
+        <ion-card-header>Informações Gerais</ion-card-header>
+
+        <ion-card-content>
+            <p>Responsável: {{cliente.resp}}</p>
+            <p>Data de inclusão: {{cliente.data}}</p>
+            <p>Sinalizador: {{cliente.tipo}}</p>
+            
+            <ion-row>
+              <ion-col>
+                <button *ngIf="!editando" ion-button icon-start small (click)="editaCliente(cliente)"> 
+                  <ion-icon name="create"></ion-icon>
+                  <div>Editar</div>
+                </button>
+              </ion-col>
+            </ion-row>
+        </ion-card-content>
+  </ion-card>
+
+
+
+
+  <form [formGroup]="formulario" (ngSubmit)="salvarCliente()" *ngIf="editando">
+    <ion-list>
+      <ion-item>
+          <ion-label floating>Nome</ion-label>
+          <ion-input type="text" formControlName="nome"></ion-input>
+      </ion-item>
+          <ion-item inset *ngIf="!formulario.controls.nome.valid && (formulario.controls.nome.dirty || formulario.controls.nome.touched)">
+              <p [hidden]="!formulario.controls.nome.errors.required" style="color:#f53d3d">
+                  O campo é obrigatório
+              </p>
+          </ion-item>
+      
+      <ion-item>
+          <ion-label floating>Responsável</ion-label>
+          <ion-input type="text" formControlName="resp"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label floating>Data de inclusão</ion-label>
+          <ion-datetime displayFormat="MM/YYYY" formControlName="data"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <button [disabled]="formulario.invalid" ion-button full block color="lime">Cadastrar</button>
+      </ion-item>
+    </ion-list>
+  </form>
+
+</ion-content>

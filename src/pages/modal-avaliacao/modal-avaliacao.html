@@ -1,0 +1,38 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-title>Criar uma nova avaliação</ion-title>
+      <ion-buttons end>
+          <button ion-button icon-only (click)="fechar()">
+            <ion-icon name="close"></ion-icon>
+          </button>
+        </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+
+<ion-content padding>
+    <form [formGroup]="formulario" (ngSubmit)="addAvaliacao()">
+        <ion-list>
+          <ion-item>
+              <ion-label floating>Data da avaliação</ion-label>
+              <ion-datetime displayFormat="MM/YYYY" formControlName="data"></ion-datetime>
+          </ion-item>
+              <ion-item *ngIf="!formulario.controls.data.valid && (formulario.controls.data.dirty || formulario.controls.data.touched)">
+                  <p [hidden]="!formulario.controls.data.errors.required" style="color:#f53d3d">
+                      O campo é obrigatório
+                  </p>
+              </ion-item>
+          <ion-item>
+            <ion-label>Selecionar clientes</ion-label>
+            <ion-select [(ngModel)]="clientes" multiple="true">
+              <ion-option *ngFor="let cliente of clientes" [value]="cliente"></ion-option>
+            </ion-select>
+          </ion-item>     
+          <button *ngIf="!editando" ion-button icon-start small (click)="editaCliente(cliente)"> 
+            <ion-icon name="create"></ion-icon>
+            <div>Editar</div>
+          </button>
+        </ion-list>      
+      </form>    
+
+</ion-content>

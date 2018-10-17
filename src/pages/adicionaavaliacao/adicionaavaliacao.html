@@ -1,0 +1,30 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-title>Registrar uma avaliação</ion-title>
+      <ion-buttons end>
+          <button ion-button icon-only (click)="fechar()">
+            <ion-icon name="close"></ion-icon>
+          </button>
+        </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+
+<ion-content padding>
+  <form [formGroup]="formulario" (ngSubmit)="salvarAvaliacao()">
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Data</ion-label>
+        <ion-datetime displayFormat="MM/YYYY" formControlName="data"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>Clientes</ion-label>
+        <ion-select formControlName="clientesSelecionados" multiple="true" cancelText="Cancelar" okText="Ok">
+          <ion-option *ngFor="let cliente of clientes | async">{{cliente.nome}}</ion-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
+  </form>
+
+
+</ion-content>

@@ -1,14 +1,14 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Ionic Blank
-    </ion-title>
+  <ion-navbar color="navbar">
+    <ion-title>Avaliação Mensal</ion-title>
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+<ion-content>
+<ion-list>
+  <ion-card *ngFor="let avaliacao of avaliacoes | async" (color)="avaliacao.tipo">
+      <ion-card-header>{{avalicao.mes}}</ion-card-header>
+      <ion-card-content>{{avaliacao.resultado}}</ion-card-content>
+  </ion-card>
+</ion-list>
 </ion-content>

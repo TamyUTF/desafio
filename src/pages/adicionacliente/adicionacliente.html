@@ -1,0 +1,54 @@
+<ion-header >
+    <ion-toolbar (color)="navbar">
+      <ion-title>Registrar novo cliente</ion-title>
+      <ion-buttons end>
+          <button ion-button icon-only (click)="fechar()">
+            <ion-icon name="close"></ion-icon>
+          </button>
+        </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+  
+
+
+<ion-content padding>
+    <form [formGroup]="formulario" (ngSubmit)="salvarCliente()">
+        <ion-list>
+          <ion-item>
+              <ion-label floating>Nome</ion-label>
+              <ion-input type="text" formControlName="nome"></ion-input>
+          </ion-item>
+              <ion-item inset *ngIf="!formulario.controls.nome.valid && (formulario.controls.nome.dirty || formulario.controls.nome.touched)">
+                  <p [hidden]="!formulario.controls.nome.errors.required" style="color:#f53d3d">
+                      O campo é obrigatório
+                  </p>
+              </ion-item>
+          
+          <ion-item>
+              <ion-label floating>Responsável</ion-label>
+              <ion-input type="text" formControlName="resp"></ion-input>
+          </ion-item>
+          <ion-item inset *ngIf="!formulario.controls.resp.valid && (formulario.controls.resp.dirty || formulario.controls.resp.touched)">
+              <p [hidden]="!formulario.controls.resp.errors.required" style="color:#f53d3d">
+                  O campo é obrigatório
+              </p>
+          </ion-item>
+
+          <ion-item>
+              <ion-label floating>Data</ion-label>
+              <ion-datetime displayFormat="MM/YYYY" formControlName="data"></ion-datetime>
+          </ion-item>
+
+          <ion-item inset *ngIf="!formulario.controls.data.valid && (formulario.controls.data.dirty || formulario.controls.data.touched)">
+              <p [hidden]="!formulario.controls.data.errors.required" style="color:#f53d3d">
+                  O campo é obrigatório
+              </p>
+          </ion-item>
+
+          <ion-item>
+            <button [disabled]="formulario.invalid" ion-button full block color="lime">Cadastrar</button>
+          </ion-item>
+        </ion-list>
+      </form>
+
+</ion-content>
