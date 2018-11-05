@@ -35,7 +35,7 @@ export class ModalClientePage {
         nome: [cliente.nome, Validators.required],
         resp: [cliente.resp, Validators.required],
         data: [cliente.data, Validators.required],
-        tipo: ['Nenhum']
+        flag: [cliente.flag]
       })
       console.log(this.formulario.value);
       this.service.salvar(this.formulario.value);

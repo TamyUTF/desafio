@@ -15,8 +15,7 @@ export class AvaliacaoProvider {
 
   constructor(public db:AngularFireDatabase, public serviceCliente:ClienteProvider, public alert:AlertController) {
     console.log('Hello AvaliacaoProvider Provider');
-    this.clientes = serviceCliente.getAll();
-    
+    this.clientes = serviceCliente.getAll();    
   }
 
 
@@ -49,8 +48,9 @@ export class AvaliacaoProvider {
     return new Promise((resolve,reject)=>{
       this.db.object(this.caminho+avaliacao.data).snapshotChanges().subscribe(result=>{
         if(result.key){//se a data já existir
-          this.mostraAlert(); //mostra um alert...//BUG: Após salvar dados, ele aparece ò_ó
+          this.mostraAlert(); //mostra um alert...//BUG: Após salvar dados, ele aparece ò_ó)9
         }else{
+          this.decFlag();
           var updateCliente={};
           avaliacao.clientes.forEach(element => {
             console.log(element.nome);
@@ -60,16 +60,23 @@ export class AvaliacaoProvider {
               resp: element.resp,
               data: avaliacao.data,};
           });
-          updateCliente['avaliacao/'+avaliacao.data]={clientes:avaliacao.clientes}
+          updateCliente['avaliacao/'+avaliacao.data]={clientes:avaliacao.clientes.key}
           this.db.object('/').update(updateCliente);
           }
         })
     })
   }
 
-  filtraFlag(clientesSelecionados){
-    this.clientes.subscribe(c=>{
-      c.map(c=>console.log(c.key))})
+  decFlag(){ 
+    this.clientes.map(c=>{
+      c.map(c=>{if(c.flag>=0){//a cada inserção de avaliação, flag--
+        this.db.object('cliente/' + c.key).update({
+          nome: c.nome,
+          resp: c.resp,
+          data: c.data,
+          flag: c.flag--})
+      }})
+    })
   }
 
 

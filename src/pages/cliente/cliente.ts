@@ -19,7 +19,6 @@ export class ClientePage {
   
   constructor(public db: AngularFireDatabase, public service:ClienteProvider, public modal:ModalController) {
       this.clientes = this.service.getAll();
-      this.verifica();
   }
 
   verifica(){
