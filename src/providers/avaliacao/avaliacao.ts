@@ -49,10 +49,17 @@ export class AvaliacaoProvider {
     return new Promise((resolve,reject)=>{
       this.db.object(this.caminho+avaliacao.data).snapshotChanges().subscribe(result=>{
         if(result.key){//se a data já existir
-          this.mostraAlert(); //mostra um alert...//BUG: Após salvar dados, ele aparecerá...
+          this.mostraAlert(); //mostra um alert...//BUG: Após salvar dados, ele aparece ò_ó
         }else{
           var updateCliente={};
-          updateCliente['cliente/'+avaliacao.clientes]={flag: 2}; //flag muda para 2 quando o cliente é selecionado para avaliação
+          avaliacao.clientes.forEach(element => {
+            console.log(element.nome);
+            updateCliente['cliente/'+ element.key]={
+              flag: 2, //flag muda para 2 quando o cliente é selecionado para avaliação
+              nome: element.nome,
+              resp: element.resp,
+              data: avaliacao.data,};
+          });
           updateCliente['avaliacao/'+avaliacao.data]={clientes:avaliacao.clientes}
           this.db.object('/').update(updateCliente);
           }
@@ -60,16 +67,10 @@ export class AvaliacaoProvider {
     })
   }
 
-/*atualizaFlag(avaliacao){
-    this.cliente = t
-    let ref = this.db.object('cliente/' + idCliente);
-    ref.snapshotChanges().subscribe(action=>{
-      if(action.payload.flag
-    })
-    this.db.object('cliente/'+idCliente).update({
-      flag:
-    })
-  }*/
+  filtraFlag(clientesSelecionados){
+    this.clientes.subscribe(c=>{
+      c.map(c=>console.log(c.key))})
+  }
 
 
   selecionarAvaliados(){

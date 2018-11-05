@@ -19,7 +19,7 @@
     <ion-item>
       <ion-label>Selecionar clientes</ion-label>
       <ion-select required [(ngModel)]="avaliacao.clientes" multiple="true" cancelText="Cancelar" okText="Ok" name="clientes">
-        <ion-option *ngFor="let cliente of clientes|async" [value]="cliente.key">{{cliente.nome}}</ion-option>
+        <ion-option *ngFor="let cliente of clientes|async" [value]="cliente">{{cliente.nome}}</ion-option>
       </ion-select>
     </ion-item>
     <button ion-button type="submit" block>Confirmar</button>

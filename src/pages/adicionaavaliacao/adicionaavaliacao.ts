@@ -17,13 +17,12 @@ export class AdicionaAvaliacaoPage {
 
   constructor(public toast: ToastController, public params: NavParams, public avaliacaoService: AvaliacaoProvider,
     public clienteService: ClienteProvider, public view: ViewController) {
-      this.clientes = clienteService.clientesAptos();
+      this.clientes = this.clienteService.clientesAptos();
       
   }
 
   salvaAvaliacao(){
     this.avaliacaoService.salvar(this.avaliacao).then(()=>{
-      console.log("pasei por aq 2")
       this.mostrarToast("Cliente foi salvo com sucesso!");
       this.fechar();
     });
