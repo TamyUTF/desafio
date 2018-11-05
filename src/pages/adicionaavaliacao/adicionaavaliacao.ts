@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavParams, ToastController, ViewController } from 'ionic-angular';
-import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { ClienteProvider } from '../../providers/cliente/cliente';
 import { AvaliacaoProvider } from '../../providers/avaliacao/avaliacao';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @IonicPage()
 @Component({
@@ -11,67 +11,48 @@ import { Observable } from 'rxjs';
   templateUrl: 'adicionaavaliacao.html',
 })
 export class AdicionaAvaliacaoPage {
-  private formulario: FormGroup;
   private clientes:Observable<any>;
-  private clientesAux: [any];
-  private avaliacoes: Observable<any>;
-  private avaliacoesAux = {key:'', data:'',clientesSelecionados:[]};
-  private msg:string;
-  private dataAtual: any;
+  private avaliados: Observable<any>;
+  private avaliacao = {data:'',clientes:{}};
 
   constructor(public toast: ToastController, public params: NavParams, public avaliacaoService: AvaliacaoProvider,
-    public clienteService: ClienteProvider, public view: ViewController,public formB:FormBuilder) {
-      this.clientes = this.clienteService.getAll();
-      this.avaliacoes = this.avaliacaoService.getAll();
-      this.criaFormulario();
-       //this.formataData();
+    public clienteService: ClienteProvider, public view: ViewController) {
+      this.clientes = clienteService.clientesAptos();
       
   }
 
-  criaFormulario(){
-    this.formulario = this.formB.group({
-      key:  [this.avaliacoesAux.key],
-      nome: [this.avaliacoesAux.data, Validators.required],
-      resp: [this.avaliacoesAux.clientesSelecionados, Validators.required],
-    })
+  salvaAvaliacao(){
+    this.avaliacaoService.salvar(this.avaliacao).then(()=>{
+      console.log("pasei por aq 2")
+      this.mostrarToast("Cliente foi salvo com sucesso!");
+      this.fechar();
+    });
   }
 
-  formataData() {//formata a data atual
-    let dataObj = new Date();
-    let ano = dataObj.getFullYear.toString();
-    let mes = parseInt(dataObj.getMonth.toString());
 
-    this.dataAtual[0] = ano;
-    this.dataAtual[1] = mes;
+
+  selecionaCliente(){
+    const clientes = this.clientes;
+    const subs = {next: function(value){
+
+    }}
+
   }
 
-  filtraCliente() { //Esta função selecionaria os clientes aptos para realizar a avaliação**
-    this.clientes.map(r => r.map(user => {
-      if (user.tipo == 'Nenhum') { //se não realizou nenhuma avalição
-        this.clientesAux.push(user.key()); //grava os ids
-      } else { //caso tenha feito avalição
-        this.avaliacoes.forEach(r => {
-          let dataCli = r.data.split("-");
-          if ((parseInt(dataCli[0].toString()) + 2) <= parseInt(this.dataAtual[1])) { //verifica carência de 2 meses para a próxima avaliação
-            this.clientesAux.push(user.key());
-          }
-        });
+  selecionaAvaliados(){//lista os clientes aptos a realizarem avaliação
+    let dataId:[any];
+    const avaliados = this.avaliados;
+    const subscribe = {next: function(value){
+      dataId.push(value.id_data);//pega
       }
-    },
-      error => console.log(error)));
-  }
+    }
+    avaliados.subscribe(subscribe);
+    avaliados.forEach(next=>{
+      let arraySplit = next.split("_");
+      for(let i = 0; i < arraySplit.length;i++){
 
-
-  verificaData(avaliacao){ //função para verificar se houve uma avaliação no mês
-    this.avaliacoes.map(r => r.map(aval =>{
-      if(avaliacao.data == aval.data){
-        this.msg = "Uma avaliação já foi realizada neste mês.";
-      }else{
-        this.filtraCliente();
-        this.avaliacaoService.salvar(avaliacao, this.clientesAux);
       }
-    }))
-
+    }) 
   }
 
   mostrarToast(msg) {

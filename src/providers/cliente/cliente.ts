@@ -33,7 +33,8 @@ export class ClienteProvider {
           .update(cliente.key, {
             nome: cliente.nome,
             resp: cliente.resp,
-            data: cliente.data
+            data: cliente.data,
+            flag: cliente.flag
           })
           .then(() => resolve())
           .catch((e) => reject(e));
@@ -43,24 +44,26 @@ export class ClienteProvider {
             nome: cliente.nome,
             resp: cliente.resp,
             data: cliente.data,
-            tipo: 'Nenhum'
+            flag: 0 //flag determina a quantidade de avaliações restantes para estar apto para avaliação
           })
           .then((result: any) => resolve(result.key));
       }
     });
   }
+  
+  clientesAptos(){//filtra clientes aptos para avaliação
+    return this.db.list(this.caminho, ref=>ref.orderByChild('flag').equalTo(0)).snapshotChanges()
+    .map(c => {
+      return c.map(c => ({
+        key: c.payload.key, ...c.payload.val()
+      }));
+    });
+  }
 
-  avaliacaoCliente(cliente) { //atualiza quando o cliente realizar a avaliação
-    return new Promise((resolve, reject) => {
-      if (cliente.key) {
-        this.db.list(this.caminho).update(cliente.key, {
-          tipo: cliente.tipo
-        })
-          .then(() => resolve())
-          .catch((e) => reject(e));
-      }
-    })
+  
 
+  avaliados(idCliente){
+    this.db.list(this.caminho)
   }
 
   remover(key: string) {

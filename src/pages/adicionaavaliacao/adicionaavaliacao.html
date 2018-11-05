@@ -11,19 +11,18 @@
 
 
 <ion-content padding>
-  <form [formGroup]="formulario" (ngSubmit)="salvarAvaliacao()">
-    <ion-list>
-      <ion-item>
-        <ion-label floating>Data</ion-label>
-        <ion-datetime displayFormat="MM/YYYY" formControlName="data"></ion-datetime>
-      </ion-item>
-      <ion-item>
-        <ion-label>Clientes</ion-label>
-        <ion-select formControlName="clientesSelecionados" multiple="true" cancelText="Cancelar" okText="Ok">
-          <ion-option *ngFor="let cliente of clientes | async">{{cliente.nome}}</ion-option>
-        </ion-select>
-      </ion-item>
-    </ion-list>
+  <form (ngSubmit)="salvaAvaliacao()">
+    <ion-item>
+      <ion-label>Data</ion-label>
+      <ion-datetime required displayFormat="MM/YYYY" [(ngModel)]="avaliacao.data" name="data"></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-label>Selecionar clientes</ion-label>
+      <ion-select required [(ngModel)]="avaliacao.clientes" multiple="true" cancelText="Cancelar" okText="Ok" name="clientes">
+        <ion-option *ngFor="let cliente of clientes|async" [value]="cliente.key">{{cliente.nome}}</ion-option>
+      </ion-select>
+    </ion-item>
+    <button ion-button type="submit" block>Confirmar</button>
   </form>
 
 

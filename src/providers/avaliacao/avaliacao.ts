@@ -1,16 +1,22 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { ClienteProvider } from '../../providers/cliente/cliente';
+import { AlertController } from 'ionic-angular';
+import { Observable } from 'rxjs';
+import {switchMap, map} from 'rxjs/operators';
 import 'rxjs/add/operator/map'
 
 
 @Injectable()
 export class AvaliacaoProvider {
   private caminho = "avaliacao/";
+  private clientes:Observable<any>;
   
 
-  constructor(public db:AngularFireDatabase, public serviceCliente:ClienteProvider) {
+  constructor(public db:AngularFireDatabase, public serviceCliente:ClienteProvider, public alert:AlertController) {
     console.log('Hello AvaliacaoProvider Provider');
+    this.clientes = serviceCliente.getAll();
+    
   }
 
 
@@ -29,37 +35,49 @@ export class AvaliacaoProvider {
       return {key:c.key,...c.payload.val()};
     });
   }
-
-  salvar(avaliacao:any,cliente){//Esta função salvaria a data de avaliação juntamente com o array de clientes selecionados
-    return new Promise((resolve,reject)=>{
-      this.db.list(this.caminho).push({data:avaliacao.data,
-      clientes:[cliente.key],data_cliente:avaliacao.data+"_"+cliente.key})
-      .then((result:any)=> resolve(result.key));
+  
+  mostraAlert(){
+    let alert = this.alert.create({
+      title: "Ops!",
+      subTitle:"Uma avaliação já foi realizada neste mês, selecione outra data, por favor.",
+      buttons:["Ok"]
     });
+    alert.present();
   }
 
+  salvar(avaliacao){
+    return new Promise((resolve,reject)=>{
+      this.db.object(this.caminho+avaliacao.data).snapshotChanges().subscribe(result=>{
+        if(result.key){//se a data já existir
+          this.mostraAlert(); //mostra um alert...//BUG: Após salvar dados, ele aparecerá...
+        }else{
+          var updateCliente={};
+          updateCliente['cliente/'+avaliacao.clientes]={flag: 2}; //flag muda para 2 quando o cliente é selecionado para avaliação
+          updateCliente['avaliacao/'+avaliacao.data]={clientes:avaliacao.clientes}
+          this.db.object('/').update(updateCliente);
+          }
+        })
+    })
+  }
 
-
-  /*salvar(avaliacao: any){
-    return new Promise((resolve, reject)=>{
-      if (avaliacao.key){
-        this.db.list(this.caminho)
-        .update(avaliacao.key,{
-          data: avaliacao.data,
-          cliente: avaliacao.cliente})
-        .then(() => resolve())
-        .catch((e) => reject(e));
-      } else {
-        console.log(this.db.list);
-        this.db.list(this.caminho)
-        .push({data: avaliacao.data, 
-          cliente: [avaliacao.cliente])
-          data_cliente:[avaliacao.data+"_"+avaliacao.cliente],
-          data_tipo:[avaliacao.data+"_"+avaliacao.tipo]})
-        .then((result:any) => resolve(result.key));
-      }
-    });
+/*atualizaFlag(avaliacao){
+    this.cliente = t
+    let ref = this.db.object('cliente/' + idCliente);
+    ref.snapshotChanges().subscribe(action=>{
+      if(action.payload.flag
+    })
+    this.db.object('cliente/'+idCliente).update({
+      flag:
+    })
   }*/
+
+
+  selecionarAvaliados(){
+    return this.db.list("avaliados").snapshotChanges().map(changes=>{
+        return changes.map(c=>({
+          key:c.payload.key, ...c.payload.val()}));
+        })
+  }
 
   remover(key:string){
     return this.db.list(this.caminho).remove(key);
