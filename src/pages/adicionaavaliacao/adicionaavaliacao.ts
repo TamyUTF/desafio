@@ -38,7 +38,7 @@ export class AdicionaAvaliacaoPage {
 
   }
 
-  selecionaAvaliados(){//lista os clientes aptos a realizarem avaliação
+  /*selecionaAvaliados(){//lista os clientes aptos a realizarem avaliação
     let dataId:[any];
     const avaliados = this.avaliados;
     const subscribe = {next: function(value){
@@ -52,7 +52,7 @@ export class AdicionaAvaliacaoPage {
 
       }
     }) 
-  }
+  }*/
 
   mostrarToast(msg) {
     let mensagem = this.toast.create({

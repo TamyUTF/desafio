@@ -53,14 +53,15 @@ export class AvaliacaoProvider {
           this.decFlag();
           var updateCliente={};
           avaliacao.clientes.forEach(element => {
-            console.log(element.nome);
             updateCliente['cliente/'+ element.key]={
-              flag: 2, //flag muda para 2 quando o cliente é selecionado para avaliação
+              flag: 2, //flag muda para 2 quando o cliente é selecionado para avaliação(determina a qtd de avaliações restantes para poder realizar outra)
               nome: element.nome,
               resp: element.resp,
               data: avaliacao.data,};
+            updateCliente['avaliacao/'+avaliacao.data]={clientes: element.key}//está salvando apenas a última key do cliente selecionado
           });
-          updateCliente['avaliacao/'+avaliacao.data]={clientes:avaliacao.clientes.key}
+          //updateCliente['avaliacao/'+avaliacao.data]={clientes: avaliacao.clientes.key} **Deveria salvar todo o array com as keys dos clientes selecionados, mas ocorre um erro
+          
           this.db.object('/').update(updateCliente);
           }
         })
@@ -69,12 +70,14 @@ export class AvaliacaoProvider {
 
   decFlag(){ 
     this.clientes.map(c=>{
-      c.map(c=>{if(c.flag>=0){//a cada inserção de avaliação, flag--
+      c.map(c=>{if(c.flag.parseInt()>=0){//a cada inserção de avaliação, flag--
+        c.flag.parseInt()-1;
+        console.log("---passei por aq---");
         this.db.object('cliente/' + c.key).update({
           nome: c.nome,
           resp: c.resp,
           data: c.data,
-          flag: c.flag--})
+          flag: c.flag})
       }})
     })
   }
